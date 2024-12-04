@@ -14,7 +14,7 @@ export function TipDev() {
   return (
     <Card>
       <FlexBoxCol>
-        <h3>Just the tip</h3>
+        <h3>Money me, money now</h3>
         <FlexBoxRow>
           <label>Amount </label>
           <Input
