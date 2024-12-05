@@ -19,12 +19,12 @@ const StyledApp = styled.div`
     color: white;
   }
   min-height: 100vh;
-  padding: 20px 20px;
 `;
 
 const AppContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
+  padding: 20px 20px;
 `;
 
 function App() {
