@@ -1189,4 +1189,4 @@ Values:
   max-width: 900px;
   margin: 0 auto;
   padding: 20px 20px;
-`;function Wle(){const{network:e}=eB();return Jn(Fle,{children:Jn(zle,{children:jh(Xk,{children:[jh(Qk,{style:{justifyContent:"right"},children:[Jn(Jk,{children:e?e===pc.MAINNET?"mainnet":"testnet":"N/A"}),Jn(AV,{})]}),Jn(jle,{})]})})})}const Hle="https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json",Kle=new Y$({defaultOptions:{queries:{refetchOnWindowFocus:!1}}});V3.createRoot(document.getElementById("root")).render(Jn(_V,{manifestUrl:Hle,children:Jn(nN,{client:Kle,children:Jn(Wle,{})})}));
+`;function Wle(){const{network:e}=eB();return Jn(Fle,{children:Jn(zle,{children:jh(Xk,{children:[jh(Qk,{style:{justifyContent:"right"},children:[Jn(Jk,{children:e?e===pc.MAINNET?"mainnet":"testnet":"N/A"}),Jn(AV,{})]}),Jn(jle,{})]})})})}const Hle="https://raw.githubusercontent.com/Ryan-Ardito/tgminiapp/refs/heads/main/public/tonconnect-manifest.json",Kle=new Y$({defaultOptions:{queries:{refetchOnWindowFocus:!1}}});V3.createRoot(document.getElementById("root")).render(Jn(_V,{manifestUrl:Hle,children:Jn(nN,{client:Kle,children:Jn(Wle,{})})}));
