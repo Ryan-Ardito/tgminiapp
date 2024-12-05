@@ -34,8 +34,7 @@ function App() {
     <StyledApp>
       <AppContainer>
         <FlexBoxCol>
-          <FlexBoxRow>
-            <TonConnectButton />
+          <FlexBoxRow style={{ justifyContent: "right" }}>
             <Button>
               {network
                 ? network === CHAIN.MAINNET
@@ -43,6 +42,7 @@ function App() {
                   : "testnet"
                 : "N/A"}
             </Button>
+            <TonConnectButton />
           </FlexBoxRow>
           <TipDev />
         </FlexBoxCol>
