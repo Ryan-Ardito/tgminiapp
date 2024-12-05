@@ -1185,8 +1185,8 @@ Values:
     color: white;
   }
   min-height: 100vh;
-  padding: 20px 20px;
 `,Wle=Vo.div`
   max-width: 900px;
   margin: 0 auto;
-`;function Hle(){const{network:e}=tB();return Jn(zle,{children:Jn(Wle,{children:jh(Jk,{children:[jh(Xk,{children:[Jn(EV,{}),Jn(eB,{children:e?e===pc.MAINNET?"mainnet":"testnet":"N/A"})]}),Jn(Fle,{})]})})})}const Kle="https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json",Vle=new Q$({defaultOptions:{queries:{refetchOnWindowFocus:!1}}});V3.createRoot(document.getElementById("root")).render(Jn(SV,{manifestUrl:Kle,children:Jn(iN,{client:Vle,children:Jn(Hle,{})})}));
+  padding: 20px 20px;
+`;function Hle(){const{network:e}=tB();return Jn(zle,{children:Jn(Wle,{children:jh(Jk,{children:[jh(Xk,{style:{justifyContent:"right"},children:[Jn(eB,{children:e?e===pc.MAINNET?"mainnet":"testnet":"N/A"}),Jn(EV,{})]}),Jn(Fle,{})]})})})}const Kle="https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json",Vle=new Q$({defaultOptions:{queries:{refetchOnWindowFocus:!1}}});V3.createRoot(document.getElementById("root")).render(Jn(SV,{manifestUrl:Kle,children:Jn(iN,{client:Vle,children:Jn(Hle,{})})}));
