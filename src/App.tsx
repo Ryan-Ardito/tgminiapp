@@ -9,6 +9,7 @@ import { useTonConnect } from "./hooks/useTonConnect";
 import { CHAIN } from "@tonconnect/protocol";
 import "@twa-dev/sdk";
 import { TipDev } from "./components/TipDev";
+import BabylonCanvas from "./components/BabylonCanvas";
 
 const StyledApp = styled.div`
   background-color: #e8e8e8;
@@ -22,9 +23,7 @@ const StyledApp = styled.div`
 `;
 
 const AppContainer = styled.div`
-  max-width: 900px;
   margin: 0 auto;
-  padding: 20px 20px;
 `;
 
 function App() {
@@ -33,19 +32,27 @@ function App() {
   return (
     <StyledApp>
       <AppContainer>
-        <FlexBoxCol>
-          <FlexBoxRow style={{ justifyContent: "right" }}>
-            <Button>
-              {network
-                ? network === CHAIN.MAINNET
-                  ? "mainnet"
-                  : "testnet"
-                : "N/A"}
-            </Button>
-            <TonConnectButton />
-          </FlexBoxRow>
-          <TipDev />
-        </FlexBoxCol>
+        {/* <FlexBoxCol> */}
+        <FlexBoxRow
+          style={{
+            justifyContent: "right",
+            position: "absolute",
+            top: "20px",
+            right: "10px",
+          }}
+        >
+          <Button>
+            {network
+              ? network === CHAIN.MAINNET
+                ? "mainnet"
+                : "testnet"
+              : "N/A"}
+          </Button>
+          <TonConnectButton />
+        </FlexBoxRow>
+        {/* <TipDev /> */}
+        <BabylonCanvas />
+        {/* </FlexBoxCol> */}
       </AppContainer>
     </StyledApp>
   );
