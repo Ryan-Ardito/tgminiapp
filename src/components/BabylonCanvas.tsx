@@ -6,11 +6,9 @@ import {
   HemisphericLight,
   Scene,
   Engine,
-  FreeCamera,
   SceneLoader,
   ArcRotateCamera,
 } from "@babylonjs/core";
-import { Tools } from "babylonjs";
 
 const BabylonCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,8 +41,7 @@ const BabylonCanvas: React.FC = () => {
 
       // Light
       const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
-
-      // light.intensity = 0.7;
+      light.intensity = 1.2;
 
       const mesh = SceneLoader.ImportMeshAsync(
         "",
