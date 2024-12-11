@@ -10,6 +10,7 @@ import {
   SceneLoader,
   ArcRotateCamera,
 } from "@babylonjs/core";
+import { Tools } from "babylonjs";
 
 const BabylonCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,7 +35,11 @@ const BabylonCanvas: React.FC = () => {
 
       camera.attachControl(canvas, true);
       camera.setTarget(Vector3.Zero());
-      camera.upperBetaLimit = Math.PI / 2 - .02;
+      camera.upperBetaLimit = Math.PI / 2 - 0.14;
+      camera.lowerBetaLimit = 0.8;
+      camera.fov = 1.2;
+      camera.lowerRadiusLimit = 6;
+      camera.upperRadiusLimit = 60;
 
       // Light
       const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
