@@ -81,6 +81,7 @@ const BabylonCanvas: React.FC = () => {
       style={{
         width: "100%",
         height: "100vh",
+        display: "block",
         touchAction: "none", // Prevents default touch actions for better control
       }}
     />
