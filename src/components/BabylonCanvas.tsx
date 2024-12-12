@@ -119,10 +119,12 @@ const BabylonCanvas: React.FC = () => {
       );
       startButton.width = "160px";
       startButton.height = "70px";
-      startButton.top = "270px";
+      startButton.top = "-80px";
       startButton.color = "white";
       startButton.background = "navy";
       startButton.cornerRadius = 40;
+      startButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+      startButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
       startButton.thickness = 3;
       startButton.fontSize = 24;
       startButton.fontWeight = "bold";
