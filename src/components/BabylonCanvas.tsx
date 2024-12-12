@@ -3,7 +3,6 @@ import "@babylonjs/loaders";
 import * as GUI from "@babylonjs/gui";
 
 import * as BABYLON from "@babylonjs/core";
-import { DefaultRenderingPipeline, PointerDragBehavior } from "babylonjs";
 
 const SwingButton = (name: string, imageUrl: string): GUI.Button => {
   const button = GUI.Button.CreateImageButton(name, "", imageUrl);
@@ -38,7 +37,6 @@ const BabylonCanvas: React.FC = () => {
 
     const createScene = (): BABYLON.Scene => {
       const scene = new BABYLON.Scene(engine);
-      const utilityLayer = new BABYLON.UtilityLayerRenderer(scene);
 
       // sky
       scene.clearColor = new BABYLON.Color4(0.4, 0.7, 0.9, 1.0);
@@ -65,12 +63,12 @@ const BabylonCanvas: React.FC = () => {
       });
 
       // Light
-      const skylight = new BABYLON.HemisphericLight(
-        "light",
-        new BABYLON.Vector3(0, 1, 0),
-        scene
-      );
-      skylight.intensity = 0.3;
+      // const skylight = new BABYLON.HemisphericLight(
+      //   "light",
+      //   new BABYLON.Vector3(0, 1, 0),
+      //   scene
+      // );
+      // skylight.intensity = 0.3;
 
       const sunlight = new BABYLON.DirectionalLight(
         "skylight",
@@ -78,17 +76,39 @@ const BabylonCanvas: React.FC = () => {
         scene
       );
       sunlight.position = new BABYLON.Vector3(10, 10, 10);
-      sunlight.intensity = 4;
+      sunlight.intensity = 2;
+
+      // material
+      const silverShiny = new BABYLON.PBRMaterial("silverShiny", scene);
+      const redShiny = new BABYLON.PBRMaterial("redShiny", scene);
+
+      // Set properties for metallic and shiny appearance
+      silverShiny.metallic = 1;
+      redShiny.metallic = 1;
+      silverShiny.roughness = 0.18;
+      redShiny.roughness = 0.1;
+
+      // Set the albedo color (base color for the material)
+      silverShiny.albedoColor = BABYLON.Color3.White();
+      redShiny.albedoColor = new BABYLON.Color3(0.9, 0.1, 0.1);
+
+      // Add an environment texture for reflections (using a simple skybox or HDR texture)
+      scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+        "https://assets.babylonjs.com/environments/environmentSpecular.env",
+        scene
+      );
 
       BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "cricket_stadium.glb");
 
       BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "logo.glb").then(
         (value) => {
-          const logo = value.meshes[0];
-          logo.position = new BABYLON.Vector3(-18, 0, 50);
-          logo.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.LOCAL);
-          logo.rotate(BABYLON.Axis.Y, Math.PI, BABYLON.Space.LOCAL);
-          logo.parent = camera;
+          const rootMesh = value.meshes[0];
+          rootMesh.position = new BABYLON.Vector3(-18, 0, 50);
+          rootMesh.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.LOCAL);
+          rootMesh.rotate(BABYLON.Axis.Y, Math.PI, BABYLON.Space.LOCAL);
+          rootMesh.parent = camera;
+          value.meshes[2].material = redShiny;
+          value.meshes[1].material = silverShiny;
         }
       );
 
