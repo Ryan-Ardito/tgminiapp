@@ -98,7 +98,13 @@ const BabylonCanvas: React.FC = () => {
         scene
       );
 
-      BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "cricket_stadium.glb");
+      BABYLON.SceneLoader.ImportMeshAsync(
+        "",
+        "scenes/",
+        "cricket_stadium.glb"
+      ).then((value) => {
+        value.meshes[14].position = new BABYLON.Vector3(0, 0, 1);
+      });
 
       BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "logo.glb").then(
         (value) => {
