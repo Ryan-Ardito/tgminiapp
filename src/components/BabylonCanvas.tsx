@@ -96,22 +96,37 @@ const BabylonCanvas: React.FC = () => {
       const advancedTexture =
         GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-      const swingLeftButton = SwingButton(
-        "swingLeft",
-        "images/cricketBatLeft.png"
-      );
-      swingLeftButton.top = "-50px";
-      swingLeftButton.left = "-100px";
+      // const swingLeftButton = SwingButton(
+      //   "swingLeft",
+      //   "images/cricketBatLeft.png"
+      // );
+      // swingLeftButton.top = "-50px";
+      // swingLeftButton.left = "-100px";
 
-      const swingRightButton = SwingButton(
-        "swingRight",
-        "images/cricketBatRight.png"
-      );
-      swingRightButton.top = "-50px";
-      swingRightButton.left = "100px";
+      // const swingRightButton = SwingButton(
+      //   "swingRight",
+      //   "images/cricketBatRight.png"
+      // );
+      // swingRightButton.top = "-50px";
+      // swingRightButton.left = "100px";
 
-      advancedTexture.addControl(swingLeftButton);
-      advancedTexture.addControl(swingRightButton);
+      // advancedTexture.addControl(swingLeftButton);
+      // advancedTexture.addControl(swingRightButton);
+
+      const startButton = GUI.Button.CreateSimpleButton(
+        "startButton",
+        "< Start >"
+      );
+      startButton.width = "160px";
+      startButton.height = "70px";
+      startButton.top = "270px";
+      startButton.color = "white";
+      startButton.background = "navy";
+      startButton.cornerRadius = 40;
+      startButton.thickness = 3;
+      startButton.fontSize = 24;
+      startButton.fontWeight = "bold";
+      advancedTexture.addControl(startButton);
 
       return scene;
     };
