@@ -89,8 +89,12 @@ const BabylonCanvas: React.FC = () => {
       redShiny.roughness = 0.1;
 
       // Set the albedo color (base color for the material)
-      silverShiny.albedoColor = BABYLON.Color3.White();
-      redShiny.albedoColor = new BABYLON.Color3(0.9, 0.1, 0.1);
+      silverShiny.albedoColor = new BABYLON.Color3(
+        0.05 / 4,
+        0.12 / 4,
+        0.25 / 4
+      );
+      redShiny.albedoColor = new BABYLON.Color3(0.9, 0.4);
 
       // Add an environment texture for reflections (using a simple skybox or HDR texture)
       scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
