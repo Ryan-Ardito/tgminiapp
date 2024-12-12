@@ -199,6 +199,11 @@
   resolved "https://registry.npmjs.org/@babylonjs/core/-/core-7.39.1.tgz"
   integrity sha512-OM6LXZ2sl0et5adUOxCfJNgjKV6LmudMQZx0vr+eNpsuUlh9sf4u8/Apcf5D0piqT8z/57Id2XHT6nB/sOemYg==
 
+"@babylonjs/gui@^7.39.3":
+  version "7.39.3"
+  resolved "https://registry.npmjs.org/@babylonjs/gui/-/gui-7.39.3.tgz"
+  integrity sha512-J10IP06sFieYob1coNB2DqoNiXqdREVxTVosujMb6A6ZGgxrUh1n1ggf30UicJS2H0aoN07BojnciSJHN1fGFg==
+
 "@babylonjs/loaders@^7.39.1":
   version "7.39.1"
   resolved "https://registry.npmjs.org/@babylonjs/loaders/-/loaders-7.39.1.tgz"
