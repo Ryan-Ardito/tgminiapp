@@ -113,7 +113,7 @@ const BabylonCanvas: React.FC = () => {
       BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "logo.glb").then(
         (value) => {
           const rootMesh = value.meshes[0];
-          rootMesh.position = new BABYLON.Vector3(-18, 10, 70);
+          rootMesh.position = new BABYLON.Vector3(-18, 10, 65);
           rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
           rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
           rootMesh.parent = camera;
