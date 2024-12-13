@@ -1,4 +1,6 @@
-body, html {
+body,
+html {
+  touch-action: none;
   font-family: sans-serif;
   margin: 0;
   padding: 0;
