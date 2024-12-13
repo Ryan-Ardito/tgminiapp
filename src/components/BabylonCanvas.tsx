@@ -156,7 +156,7 @@ const BabylonCanvas: React.FC = () => {
             lastPointerY = evt.clientY;
           };
 
-          scene.onPointerUp = () => {
+          const resetLogoRotationWithAnimation = () => {
             isDragging = false;
 
             // Snap back to original rotation with animation
@@ -184,6 +184,10 @@ const BabylonCanvas: React.FC = () => {
             rootMesh.animations.push(snapBackAnimation);
 
             scene.beginAnimation(rootMesh, 0, 10, false);
+          };
+
+          scene.onPointerUp = () => {
+            resetLogoRotationWithAnimation();
           };
         }
       );
