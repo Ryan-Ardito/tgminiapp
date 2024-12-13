@@ -113,12 +113,78 @@ const BabylonCanvas: React.FC = () => {
       BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "logo.glb").then(
         (value) => {
           const rootMesh = value.meshes[0];
-          rootMesh.position = new BABYLON.Vector3(-18, 0, 50);
-          rootMesh.rotate(BABYLON.Axis.X, Math.PI / 2, BABYLON.Space.LOCAL);
-          rootMesh.rotate(BABYLON.Axis.Y, Math.PI, BABYLON.Space.LOCAL);
+          rootMesh.position = new BABYLON.Vector3(-18, 10, 50);
+          rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
+          rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
           rootMesh.parent = camera;
           value.meshes[2].material = redShiny;
           value.meshes[1].material = silverShiny;
+
+          // Rotation state
+          let isDragging = false;
+          let lastPointerX = 0;
+          let lastPointerY = 0;
+          const rotationLimit = Math.PI / 8;
+          const originalRotation = rootMesh.rotation.clone();
+
+          scene.onPointerDown = (evt) => {
+            isDragging = true;
+            lastPointerX = evt.clientX;
+            lastPointerY = evt.clientY;
+          };
+
+          scene.onPointerMove = (evt) => {
+            if (!isDragging) return;
+
+            const deltaX = evt.clientX - lastPointerX;
+            const deltaY = evt.clientY - lastPointerY;
+
+            // Apply rotation with limits
+            rootMesh.rotation.y = BABYLON.Scalar.Clamp(
+              rootMesh.rotation.y - deltaX * 0.005,
+              originalRotation.y - rotationLimit,
+              originalRotation.y + rotationLimit
+            );
+
+            rootMesh.rotation.x = BABYLON.Scalar.Clamp(
+              rootMesh.rotation.x - deltaY * 0.005,
+              originalRotation.x - rotationLimit,
+              originalRotation.x + rotationLimit
+            );
+
+            lastPointerX = evt.clientX;
+            lastPointerY = evt.clientY;
+          };
+
+          scene.onPointerUp = () => {
+            isDragging = false;
+
+            // Snap back to original rotation with animation
+            const snapBackAnimation = new BABYLON.Animation(
+              "snapBack",
+              "rotation",
+              60,
+              BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+              BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            );
+
+            const keys = [
+              {
+                frame: 0,
+                value: rootMesh.rotation.clone(),
+              },
+              {
+                frame: 10,
+                value: originalRotation.clone(),
+              },
+            ];
+
+            snapBackAnimation.setKeys(keys);
+            rootMesh.animations = [];
+            rootMesh.animations.push(snapBackAnimation);
+
+            scene.beginAnimation(rootMesh, 0, 10, false);
+          };
         }
       );
 
