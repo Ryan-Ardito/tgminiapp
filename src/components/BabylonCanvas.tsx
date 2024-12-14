@@ -4,7 +4,7 @@ import * as GUI from "@babylonjs/gui";
 
 import * as BABYLON from "@babylonjs/core";
 
-const SwingButton = (name: string, imageUrl: string): GUI.Button => {
+const createSwingButton = (name: string, imageUrl: string): GUI.Button => {
   const button = GUI.Button.CreateImageButton(name, "", imageUrl);
 
   button.width = "100px";
@@ -24,6 +24,98 @@ const SwingButton = (name: string, imageUrl: string): GUI.Button => {
   image.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
 
   return button;
+};
+
+const createStartButton = () => {
+  const startButton = GUI.Button.CreateSimpleButton("startButton", "< Start >");
+  startButton.width = "160px";
+  startButton.height = "70px";
+  startButton.top = "-80px";
+  startButton.color = "white";
+  startButton.background = "navy";
+  startButton.cornerRadius = 40;
+  startButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+  startButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+  startButton.thickness = 3;
+  startButton.fontSize = 24;
+  startButton.fontWeight = "bold";
+
+  return startButton;
+};
+
+const resetLogoRotationWithAnimation = (
+  mesh: BABYLON.AbstractMesh,
+  targetRotation: BABYLON.Vector3,
+  scene: BABYLON.Scene
+) => {
+  // Snap back to original rotation with animation
+  const snapBackAnimation = new BABYLON.Animation(
+    "snapBack",
+    "rotation",
+    60,
+    BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+  );
+
+  const keys = [
+    {
+      frame: 0,
+      value: mesh.rotation.clone(),
+    },
+    {
+      frame: 10,
+      value: targetRotation.clone(),
+    },
+  ];
+
+  snapBackAnimation.setKeys(keys);
+  mesh.animations = [];
+  mesh.animations.push(snapBackAnimation);
+
+  scene.beginAnimation(mesh, 0, 10, false);
+};
+
+const rotationControl = (mesh: BABYLON.AbstractMesh, scene: BABYLON.Scene) => {
+  const sensitivity = 0.005;
+  const rotationLimit = Math.PI / 8;
+  const originalRotation = mesh.rotation.clone();
+  let isDragging = false;
+  let lastPointerX = 0;
+  let lastPointerY = 0;
+
+  scene.onPointerDown = (evt) => {
+    isDragging = true;
+    lastPointerX = evt.clientX;
+    lastPointerY = evt.clientY;
+  };
+
+  scene.onPointerMove = (evt) => {
+    if (!isDragging) return;
+
+    const deltaX = evt.clientX - lastPointerX;
+    const deltaY = evt.clientY - lastPointerY;
+
+    // Apply rotation with limits
+    mesh.rotation.y = BABYLON.Scalar.Clamp(
+      mesh.rotation.y - deltaX * sensitivity,
+      originalRotation.y - rotationLimit,
+      originalRotation.y + rotationLimit
+    );
+
+    mesh.rotation.x = BABYLON.Scalar.Clamp(
+      mesh.rotation.x - deltaY * sensitivity,
+      originalRotation.x - rotationLimit,
+      originalRotation.x + rotationLimit
+    );
+
+    lastPointerX = evt.clientX;
+    lastPointerY = evt.clientY;
+  };
+
+  scene.onPointerUp = () => {
+    isDragging = false;
+    resetLogoRotationWithAnimation(mesh, originalRotation, scene);
+  };
 };
 
 const BabylonCanvas: React.FC = () => {
@@ -78,17 +170,15 @@ const BabylonCanvas: React.FC = () => {
       sunlight.position = new BABYLON.Vector3(10, 10, 10);
       sunlight.intensity = 2;
 
-      // material
+      // materials
       const silverShiny = new BABYLON.PBRMaterial("silverShiny", scene);
       const redShiny = new BABYLON.PBRMaterial("redShiny", scene);
 
-      // Set properties for metallic and shiny appearance
       silverShiny.metallic = 1;
       redShiny.metallic = 1;
       silverShiny.roughness = 0.18;
       redShiny.roughness = 0.1;
 
-      // Set the albedo color (base color for the material)
       silverShiny.albedoColor = new BABYLON.Color3(
         0.05 / 4,
         0.12 / 4,
@@ -96,7 +186,7 @@ const BabylonCanvas: React.FC = () => {
       );
       redShiny.albedoColor = new BABYLON.Color3(0.9, 0.4, 0.1);
 
-      // Add an environment texture for reflections (using a simple skybox or HDR texture)
+      // HDRI map
       scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
         "https://assets.babylonjs.com/environments/environmentSpecular.env",
         scene
@@ -120,75 +210,7 @@ const BabylonCanvas: React.FC = () => {
           value.meshes[2].material = redShiny;
           value.meshes[1].material = silverShiny;
 
-          // Rotation state
-          let isDragging = false;
-          let lastPointerX = 0;
-          let lastPointerY = 0;
-          const rotationLimit = Math.PI / 8;
-          const originalRotation = rootMesh.rotation.clone();
-
-          scene.onPointerDown = (evt) => {
-            isDragging = true;
-            lastPointerX = evt.clientX;
-            lastPointerY = evt.clientY;
-          };
-
-          scene.onPointerMove = (evt) => {
-            if (!isDragging) return;
-
-            const deltaX = evt.clientX - lastPointerX;
-            const deltaY = evt.clientY - lastPointerY;
-
-            // Apply rotation with limits
-            rootMesh.rotation.y = BABYLON.Scalar.Clamp(
-              rootMesh.rotation.y - deltaX * 0.005,
-              originalRotation.y - rotationLimit,
-              originalRotation.y + rotationLimit
-            );
-
-            rootMesh.rotation.x = BABYLON.Scalar.Clamp(
-              rootMesh.rotation.x - deltaY * 0.005,
-              originalRotation.x - rotationLimit,
-              originalRotation.x + rotationLimit
-            );
-
-            lastPointerX = evt.clientX;
-            lastPointerY = evt.clientY;
-          };
-
-          const resetLogoRotationWithAnimation = () => {
-            isDragging = false;
-
-            // Snap back to original rotation with animation
-            const snapBackAnimation = new BABYLON.Animation(
-              "snapBack",
-              "rotation",
-              60,
-              BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-              BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
-            );
-
-            const keys = [
-              {
-                frame: 0,
-                value: rootMesh.rotation.clone(),
-              },
-              {
-                frame: 10,
-                value: originalRotation.clone(),
-              },
-            ];
-
-            snapBackAnimation.setKeys(keys);
-            rootMesh.animations = [];
-            rootMesh.animations.push(snapBackAnimation);
-
-            scene.beginAnimation(rootMesh, 0, 10, false);
-          };
-
-          scene.onPointerUp = () => {
-            resetLogoRotationWithAnimation();
-          };
+          rotationControl(rootMesh, scene);
         }
       );
 
@@ -213,21 +235,7 @@ const BabylonCanvas: React.FC = () => {
       // advancedTexture.addControl(swingLeftButton);
       // advancedTexture.addControl(swingRightButton);
 
-      const startButton = GUI.Button.CreateSimpleButton(
-        "startButton",
-        "< Start >"
-      );
-      startButton.width = "160px";
-      startButton.height = "70px";
-      startButton.top = "-80px";
-      startButton.color = "white";
-      startButton.background = "navy";
-      startButton.cornerRadius = 40;
-      startButton.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-      startButton.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-      startButton.thickness = 3;
-      startButton.fontSize = 24;
-      startButton.fontWeight = "bold";
+      const startButton = createStartButton();
       advancedTexture.addControl(startButton);
 
       return scene;
@@ -260,7 +268,7 @@ const BabylonCanvas: React.FC = () => {
         width: "100%",
         height: "100vh",
         display: "block",
-        touchAction: "none", // Prevents default touch actions for better control
+        touchAction: "none",
       }}
     />
   );
