@@ -4,16 +4,30 @@ import * as GUI from "@babylonjs/gui";
 
 import * as BABYLON from "@babylonjs/core";
 
-const randomFielderPosition = (): BABYLON.Vector3 => {
+const randomFielderPosition = (
+  numFielders: number,
+  minSpacing: number
+): BABYLON.Vector3[] => {
   const fieldRadius = 50;
-  const minDistance = 12;
-  const angle = Math.random() * Math.PI * 2;
-  const distance = Math.random() * (fieldRadius - minDistance) + minDistance;
+  const minRadius = 20;
 
-  const x = distance * Math.cos(angle);
-  const z = distance * Math.sin(angle);
+  const positions = [];
+  const minAngle = minSpacing / fieldRadius;
 
-  return new BABYLON.Vector3(x, 0, z);
+  let angleStart = Math.random() * 2 * Math.PI;
+
+  for (let i = 0; i < numFielders; i++) {
+    const distance = Math.random() * (fieldRadius - minRadius) + minRadius;
+    let angle = angleStart + i * minAngle + Math.random() * (minAngle / 2);
+    angle %= 2 * Math.PI;
+
+    const x = distance * Math.cos(angle);
+    const z = distance * Math.sin(angle);
+
+    positions.push(new BABYLON.Vector3(x, 0, z));
+  }
+
+  return positions;
 };
 
 const createSwingButton = (name: string, imageUrl: string): GUI.Button => {
@@ -207,6 +221,7 @@ const flyToBatter = (camera: BABYLON.ArcRotateCamera, scene: BABYLON.Scene) => {
   camera.setTarget(new BABYLON.Vector3(0, 2, 0));
   scene.beginAnimation(camera, 0, 30, false);
 };
+
 const createMaterials = (scene: BABYLON.Scene) => {
   const navyMatte = new BABYLON.PBRMaterial("silverShiny", scene);
   navyMatte.metallic = 1;
@@ -316,7 +331,7 @@ const BabylonCanvas: React.FC = () => {
       );
       fielderMeshTask.onSuccess = (task) => {
         const fielder = task.loadedMeshes[0];
-        fielder.position = randomFielderPosition();
+        fielder.position = randomFielderPosition(9, 5)[0];
         fielder.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
         fielder.scaling = new BABYLON.Vector3(1, 1, 1);
         fielder.lookAt(new BABYLON.Vector3(0, 1, 0));
