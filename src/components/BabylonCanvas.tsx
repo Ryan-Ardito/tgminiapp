@@ -129,6 +129,7 @@ const BabylonCanvas: React.FC = () => {
 
     const createScene = (): BABYLON.Scene => {
       const scene = new BABYLON.Scene(engine);
+      const assetsManager = new BABYLON.AssetsManager(scene);
 
       // sky
       scene.clearColor = new BABYLON.Color4(0.4, 0.7, 0.9, 1.0);
@@ -192,51 +193,117 @@ const BabylonCanvas: React.FC = () => {
         scene
       );
 
-      BABYLON.SceneLoader.ImportMeshAsync(
+      const stadiumMeshTask = assetsManager.addMeshTask(
+        "stadiumMeshTask",
         "",
         "scenes/",
         "cricket_stadium.glb"
-      ).then((value) => {
-        value.meshes[14].position = new BABYLON.Vector3(0, 0, 1);
-      });
-
-      BABYLON.SceneLoader.ImportMeshAsync("", "scenes/", "logo.glb").then(
-        (value) => {
-          const rootMesh = value.meshes[0];
-          rootMesh.position = new BABYLON.Vector3(-18, 10, 60);
-          rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
-          rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
-          rootMesh.parent = camera;
-          value.meshes[2].material = redShiny;
-          value.meshes[1].material = silverShiny;
-
-          rotationControl(rootMesh, scene);
-        }
       );
+
+      stadiumMeshTask.onSuccess = (task) => {
+        task.loadedMeshes[14].position = new BABYLON.Vector3(0, 0, 0);
+      };
+
+      let logo: BABYLON.AbstractMesh;
+      const logoMeshTask = assetsManager.addMeshTask(
+        "logoMeshTask",
+        "",
+        "scenes/",
+        "logo.glb"
+      );
+      logoMeshTask.onSuccess = (task) => {
+        const rootMesh = task.loadedMeshes[0];
+        logo = rootMesh;
+        rootMesh.position = new BABYLON.Vector3(-18, 10, 60);
+        rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
+        rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
+        rootMesh.parent = camera;
+        task.loadedMeshes[2].material = redShiny;
+        task.loadedMeshes[1].material = silverShiny;
+
+        rotationControl(rootMesh, scene);
+      };
+
+      // Load the batter model
+      const batterMeshTask = assetsManager.addMeshTask(
+        "batterMeshTask",
+        "",
+        "scenes/batter/",
+        "batterDragBat.glb"
+      );
+      batterMeshTask.onSuccess = (task) => {
+        const batter = task.loadedMeshes[0];
+        batter.position = new BABYLON.Vector3(-9, 0.5, 1);
+        batter.scaling = new BABYLON.Vector3(1, 1, 1);
+      };
+      assetsManager.load();
 
       // controls
       const advancedTexture =
         GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-      // const swingLeftButton = SwingButton(
-      //   "swingLeft",
-      //   "images/cricketBatLeft.png"
-      // );
-      // swingLeftButton.top = "-50px";
-      // swingLeftButton.left = "-100px";
+      const swingLeftButton = createSwingButton(
+        "swingLeft",
+        "images/cricketBatLeft.png"
+      );
+      swingLeftButton.top = "-50px";
+      swingLeftButton.left = "-100px";
 
-      // const swingRightButton = SwingButton(
-      //   "swingRight",
-      //   "images/cricketBatRight.png"
-      // );
-      // swingRightButton.top = "-50px";
-      // swingRightButton.left = "100px";
-
-      // advancedTexture.addControl(swingLeftButton);
-      // advancedTexture.addControl(swingRightButton);
+      const swingRightButton = createSwingButton(
+        "swingRight",
+        "images/cricketBatRight.png"
+      );
+      swingRightButton.top = "-50px";
+      swingRightButton.left = "100px";
 
       const startButton = createStartButton();
       advancedTexture.addControl(startButton);
+
+      startButton.onPointerUpObservable.add(() => {
+        // hide logo
+        logo.setEnabled(false);
+
+        // hide start button
+        advancedTexture.removeControl(startButton);
+
+        // show swing buttons
+        advancedTexture.addControl(swingLeftButton);
+        advancedTexture.addControl(swingRightButton);
+
+        const flyToBatter = new BABYLON.Animation(
+          "flyToBatter",
+          "position",
+          60,
+          BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+          BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+        const keys = [
+          {
+            frame: 0,
+            value: camera.position.clone(),
+          },
+          {
+            frame: 30,
+            value: new BABYLON.Vector3(-15, 4, 0),
+          },
+        ];
+
+        flyToBatter.setKeys(keys);
+        camera.animations = [];
+        camera.animations.push(flyToBatter);
+
+        scene.onBeforeRenderObservable //stop the camera rotation
+          .clear();
+
+        camera.setTarget(new BABYLON.Vector3(0, 2, 0));
+        scene.beginAnimation(camera, 0, 30, false);
+
+        // Pan the camera to the wicket 10m behind the origin
+        // camera.setPosition(new BABYLON.Vector3(-14, 4, 0.4));
+        // rotate the camera to face the wicket
+        // camera.alpha = Math.PI;
+      });
 
       return scene;
     };
