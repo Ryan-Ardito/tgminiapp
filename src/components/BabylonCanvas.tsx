@@ -43,7 +43,7 @@ const createStartButton = () => {
   return startButton;
 };
 
-const resetLogoRotationWithAnimation = (
+const resetLogoRotation = (
   mesh: BABYLON.AbstractMesh,
   targetRotation: BABYLON.Vector3,
   scene: BABYLON.Scene
@@ -75,7 +75,10 @@ const resetLogoRotationWithAnimation = (
   scene.beginAnimation(mesh, 0, 10, false);
 };
 
-const rotationControl = (mesh: BABYLON.AbstractMesh, scene: BABYLON.Scene) => {
+const logoRotationControl = (
+  mesh: BABYLON.AbstractMesh,
+  scene: BABYLON.Scene
+) => {
   const sensitivity = 0.005;
   const rotationLimit = Math.PI / 8;
   const originalRotation = mesh.rotation.clone();
@@ -114,8 +117,97 @@ const rotationControl = (mesh: BABYLON.AbstractMesh, scene: BABYLON.Scene) => {
 
   scene.onPointerUp = () => {
     isDragging = false;
-    resetLogoRotationWithAnimation(mesh, originalRotation, scene);
+    resetLogoRotation(mesh, originalRotation, scene);
   };
+};
+
+const createCamera = (scene: BABYLON.Scene): BABYLON.ArcRotateCamera => {
+  const camera = new BABYLON.ArcRotateCamera(
+    "camera1",
+    0,
+    1.2,
+    60,
+    new BABYLON.Vector3(0, 12, 0),
+    scene
+  );
+
+  camera.fov = 1.2;
+  camera.alpha = Math.PI;
+  // camera.attachControl(canvas, true);
+  // camera.upperBetaLimit = Math.PI / 2 - 0.14;
+  // camera.lowerBetaLimit = 0.8;
+  // camera.lowerRadiusLimit = 6;
+  // camera.upperRadiusLimit = 60;
+
+  // camera movement
+  scene.onBeforeRenderObservable.add(() => {
+    camera.alpha += 0.001;
+  });
+
+  return camera;
+};
+
+const createLighting = (scene: BABYLON.Scene) => {
+  const sunlight = new BABYLON.DirectionalLight(
+    "skylight",
+    new BABYLON.Vector3(-1, -2, -1),
+    scene
+  );
+  sunlight.position = new BABYLON.Vector3(10, 10, 10);
+  sunlight.intensity = 2;
+
+  // ambient
+  // const skylight = new BABYLON.HemisphericLight(
+  //   "light",
+  //   new BABYLON.Vector3(0, 1, 0),
+  //   scene
+  // );
+  // skylight.intensity = 0.3;
+  return { sunlight };
+};
+
+const flyToBatter = (camera: BABYLON.ArcRotateCamera, scene: BABYLON.Scene) => {
+  const flyAnimation = new BABYLON.Animation(
+    "flyToBatter",
+    "position",
+    60,
+    BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+  );
+
+  const keys = [
+    {
+      frame: 0,
+      value: camera.position.clone(),
+    },
+    {
+      frame: 30,
+      value: new BABYLON.Vector3(-15, 4, 0),
+    },
+  ];
+
+  flyAnimation.setKeys(keys);
+  camera.animations = [];
+  camera.animations.push(flyAnimation);
+
+  scene.onBeforeRenderObservable //stop the camera rotation
+    .clear();
+
+  camera.setTarget(new BABYLON.Vector3(0, 2, 0));
+  scene.beginAnimation(camera, 0, 30, false);
+};
+const createMaterials = (scene: BABYLON.Scene) => {
+  const navyMatte = new BABYLON.PBRMaterial("silverShiny", scene);
+  navyMatte.metallic = 1;
+  navyMatte.roughness = 0.18;
+  navyMatte.albedoColor = new BABYLON.Color3(0.05 / 4, 0.12 / 4, 0.25 / 4);
+
+  const goldShiny = new BABYLON.PBRMaterial("redShiny", scene);
+  goldShiny.metallic = 1;
+  goldShiny.roughness = 0.1;
+  goldShiny.albedoColor = new BABYLON.Color3(0.9, 0.4, 0.1);
+
+  return { goldShiny, navyMatte };
 };
 
 const BabylonCanvas: React.FC = () => {
@@ -134,59 +226,12 @@ const BabylonCanvas: React.FC = () => {
       // sky
       scene.clearColor = new BABYLON.Color4(0.4, 0.7, 0.9, 1.0);
 
-      const camera = new BABYLON.ArcRotateCamera(
-        "camera1",
-        0,
-        1.2,
-        60,
-        new BABYLON.Vector3(0, 12, 0),
-        scene
-      );
+      const camera = createCamera(scene);
 
-      camera.fov = 1.2;
-      camera.alpha = Math.PI;
-      // camera.attachControl(canvas, true);
-      // camera.upperBetaLimit = Math.PI / 2 - 0.14;
-      // camera.lowerBetaLimit = 0.8;
-      // camera.lowerRadiusLimit = 6;
-      // camera.upperRadiusLimit = 60;
-
-      // camera movement
-      scene.onBeforeRenderObservable.add(() => {
-        camera.alpha += 0.001;
-      });
-
-      // Light
-      // const skylight = new BABYLON.HemisphericLight(
-      //   "light",
-      //   new BABYLON.Vector3(0, 1, 0),
-      //   scene
-      // );
-      // skylight.intensity = 0.3;
-
-      const sunlight = new BABYLON.DirectionalLight(
-        "skylight",
-        new BABYLON.Vector3(-1, -2, -1),
-        scene
-      );
-      sunlight.position = new BABYLON.Vector3(10, 10, 10);
-      sunlight.intensity = 2;
+      const { sunlight } = createLighting(scene);
 
       // materials
-      const silverShiny = new BABYLON.PBRMaterial("silverShiny", scene);
-      const redShiny = new BABYLON.PBRMaterial("redShiny", scene);
-
-      silverShiny.metallic = 1;
-      redShiny.metallic = 1;
-      silverShiny.roughness = 0.18;
-      redShiny.roughness = 0.1;
-
-      silverShiny.albedoColor = new BABYLON.Color3(
-        0.05 / 4,
-        0.12 / 4,
-        0.25 / 4
-      );
-      redShiny.albedoColor = new BABYLON.Color3(0.9, 0.4, 0.1);
+      const { goldShiny, navyMatte } = createMaterials(scene);
 
       // HDRI map
       scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
@@ -200,29 +245,28 @@ const BabylonCanvas: React.FC = () => {
         "scenes/",
         "cricket_stadium.glb"
       );
-
       stadiumMeshTask.onSuccess = (task) => {
         task.loadedMeshes[14].position = new BABYLON.Vector3(0, 0, 0);
       };
 
-      let logo: BABYLON.AbstractMesh;
       const logoMeshTask = assetsManager.addMeshTask(
         "logoMeshTask",
         "",
         "scenes/",
         "logo.glb"
       );
+      let logoMeshes: BABYLON.AbstractMesh[];
       logoMeshTask.onSuccess = (task) => {
+        logoMeshes = task.loadedMeshes;
         const rootMesh = task.loadedMeshes[0];
-        logo = rootMesh;
         rootMesh.position = new BABYLON.Vector3(-18, 10, 60);
         rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
         rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
         rootMesh.parent = camera;
-        task.loadedMeshes[2].material = redShiny;
-        task.loadedMeshes[1].material = silverShiny;
+        task.loadedMeshes[2].material = goldShiny;
+        task.loadedMeshes[1].material = navyMatte;
 
-        rotationControl(rootMesh, scene);
+        logoRotationControl(rootMesh, scene);
       };
 
       // Load the batter model
@@ -275,7 +319,9 @@ const BabylonCanvas: React.FC = () => {
 
       startButton.onPointerUpObservable.add(() => {
         // hide logo
-        logo.setEnabled(false);
+        logoMeshes.forEach((mesh) => {
+          mesh.setEnabled(false);
+        });
 
         // hide start button
         advancedTexture.removeControl(startButton);
@@ -284,39 +330,7 @@ const BabylonCanvas: React.FC = () => {
         advancedTexture.addControl(swingLeftButton);
         advancedTexture.addControl(swingRightButton);
 
-        const flyToBatter = new BABYLON.Animation(
-          "flyToBatter",
-          "position",
-          60,
-          BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-          BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
-        );
-
-        const keys = [
-          {
-            frame: 0,
-            value: camera.position.clone(),
-          },
-          {
-            frame: 30,
-            value: new BABYLON.Vector3(-15, 4, 0),
-          },
-        ];
-
-        flyToBatter.setKeys(keys);
-        camera.animations = [];
-        camera.animations.push(flyToBatter);
-
-        scene.onBeforeRenderObservable //stop the camera rotation
-          .clear();
-
-        camera.setTarget(new BABYLON.Vector3(0, 2, 0));
-        scene.beginAnimation(camera, 0, 30, false);
-
-        // Pan the camera to the wicket 10m behind the origin
-        // camera.setPosition(new BABYLON.Vector3(-14, 4, 0.4));
-        // rotate the camera to face the wicket
-        // camera.alpha = Math.PI;
+        flyToBatter(camera, scene);
       });
 
       assetsManager.load();
