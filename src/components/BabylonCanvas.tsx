@@ -144,6 +144,7 @@ const BabylonCanvas: React.FC = () => {
       );
 
       camera.fov = 1.2;
+      camera.alpha = Math.PI;
       // camera.attachControl(canvas, true);
       // camera.upperBetaLimit = Math.PI / 2 - 0.14;
       // camera.lowerBetaLimit = 0.8;
