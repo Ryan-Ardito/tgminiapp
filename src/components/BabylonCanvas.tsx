@@ -4,6 +4,18 @@ import * as GUI from "@babylonjs/gui";
 
 import * as BABYLON from "@babylonjs/core";
 
+const randomFielderPosition = (): BABYLON.Vector3 => {
+  const fieldRadius = 50;
+  const minDistance = 12;
+  const angle = Math.random() * Math.PI * 2;
+  const distance = Math.random() * (fieldRadius - minDistance) + minDistance;
+
+  const x = distance * Math.cos(angle);
+  const z = distance * Math.sin(angle);
+
+  return new BABYLON.Vector3(x, 0, z);
+};
+
 const createSwingButton = (name: string, imageUrl: string): GUI.Button => {
   const button = GUI.Button.CreateImageButton(name, "", imageUrl);
 
@@ -190,8 +202,7 @@ const flyToBatter = (camera: BABYLON.ArcRotateCamera, scene: BABYLON.Scene) => {
   camera.animations = [];
   camera.animations.push(flyAnimation);
 
-  scene.onBeforeRenderObservable //stop the camera rotation
-    .clear();
+  scene.onBeforeRenderObservable.clear(); //stop the camera rotation
 
   camera.setTarget(new BABYLON.Vector3(0, 2, 0));
   scene.beginAnimation(camera, 0, 30, false);
@@ -270,31 +281,46 @@ const BabylonCanvas: React.FC = () => {
       };
 
       // Load the batter model
-      // const batterMeshTask = assetsManager.addMeshTask(
-      //   "batterMeshTask",
-      //   "",
-      //   "scenes/batter/",
-      //   "batterDragBat.glb"
-      // );
-      // batterMeshTask.onSuccess = (task) => {
-      //   const batter = task.loadedMeshes[0];
-      //   batter.position = new BABYLON.Vector3(-9, 0.5, 1);
-      //   batter.scaling = new BABYLON.Vector3(1, 1, 1);
-      // };
+      const batterMeshTask = assetsManager.addMeshTask(
+        "batterMeshTask",
+        "",
+        "scenes/batter/",
+        "batterDragBat.glb"
+      );
+      batterMeshTask.onSuccess = (task) => {
+        const batter = task.loadedMeshes[0];
+        batter.position = new BABYLON.Vector3(-9, 0, 1);
+        batter.scaling = new BABYLON.Vector3(1, 1, 1);
+      };
 
       // Load the bowler model
-      // const bowlerMeshTask = assetsManager.addMeshTask(
-      //   "bowlerMeshTask",
-      //   "",
-      //   "scenes/bowler/",
-      //   "bowlerIdle.glb"
-      // );
-      // bowlerMeshTask.onSuccess = (task) => {
-      //   const bowler = task.loadedMeshes[0];
-      //   bowler.position = new BABYLON.Vector3(9, 0.5, 1);
-      //   bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-      //   bowler.scaling = new BABYLON.Vector3(1, 1, 1);
-      // };
+      const bowlerMeshTask = assetsManager.addMeshTask(
+        "bowlerMeshTask",
+        "",
+        "scenes/bowler/",
+        "bowlerIdle.glb"
+      );
+      bowlerMeshTask.onSuccess = (task) => {
+        const bowler = task.loadedMeshes[0];
+        bowler.position = new BABYLON.Vector3(9, 0, 1);
+        bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+        bowler.scaling = new BABYLON.Vector3(1, 1, 1);
+      };
+
+      // Load the fielder model
+      const fielderMeshTask = assetsManager.addMeshTask(
+        "fielderMeshTask",
+        "",
+        "scenes/fielder/",
+        "fielderIdle.glb"
+      );
+      fielderMeshTask.onSuccess = (task) => {
+        const fielder = task.loadedMeshes[0];
+        fielder.position = randomFielderPosition();
+        fielder.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+        fielder.scaling = new BABYLON.Vector3(1, 1, 1);
+        fielder.lookAt(new BABYLON.Vector3(0, 1, 0));
+      };
 
       // controls
       const advancedTexture =
