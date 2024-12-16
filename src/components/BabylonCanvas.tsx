@@ -226,18 +226,31 @@ const BabylonCanvas: React.FC = () => {
       };
 
       // Load the batter model
-      const batterMeshTask = assetsManager.addMeshTask(
-        "batterMeshTask",
-        "",
-        "scenes/batter/",
-        "batterDragBat.glb"
-      );
-      batterMeshTask.onSuccess = (task) => {
-        const batter = task.loadedMeshes[0];
-        batter.position = new BABYLON.Vector3(-9, 0.5, 1);
-        batter.scaling = new BABYLON.Vector3(1, 1, 1);
-      };
-      assetsManager.load();
+      // const batterMeshTask = assetsManager.addMeshTask(
+      //   "batterMeshTask",
+      //   "",
+      //   "scenes/batter/",
+      //   "batterDragBat.glb"
+      // );
+      // batterMeshTask.onSuccess = (task) => {
+      //   const batter = task.loadedMeshes[0];
+      //   batter.position = new BABYLON.Vector3(-9, 0.5, 1);
+      //   batter.scaling = new BABYLON.Vector3(1, 1, 1);
+      // };
+
+      // Load the bowler model
+      // const bowlerMeshTask = assetsManager.addMeshTask(
+      //   "bowlerMeshTask",
+      //   "",
+      //   "scenes/bowler/",
+      //   "bowlerIdle.glb"
+      // );
+      // bowlerMeshTask.onSuccess = (task) => {
+      //   const bowler = task.loadedMeshes[0];
+      //   bowler.position = new BABYLON.Vector3(9, 0.5, 1);
+      //   bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+      //   bowler.scaling = new BABYLON.Vector3(1, 1, 1);
+      // };
 
       // controls
       const advancedTexture =
@@ -305,6 +318,8 @@ const BabylonCanvas: React.FC = () => {
         // rotate the camera to face the wicket
         // camera.alpha = Math.PI;
       });
+
+      assetsManager.load();
 
       return scene;
     };
