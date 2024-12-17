@@ -316,6 +316,44 @@ const loadMeshes = (
   };
 };
 
+const createControls = (
+  camera: BABYLON.ArcRotateCamera,
+  scene: BABYLON.Scene
+) => {
+  const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+  const swingLeftButton = createSwingButton(
+    "swingLeft",
+    "images/cricketBatLeft.png"
+  );
+  swingLeftButton.top = "-50px";
+  swingLeftButton.left = "-100px";
+
+  const swingRightButton = createSwingButton(
+    "swingRight",
+    "images/cricketBatRight.png"
+  );
+  swingRightButton.top = "-50px";
+  swingRightButton.left = "100px";
+
+  const startButton = createStartButton();
+  advancedTexture.addControl(startButton);
+
+  startButton.onPointerUpObservable.add(() => {
+    // hide logo
+    gameMeshes.logo.setEnabled(false);
+
+    // hide start button
+    advancedTexture.removeControl(startButton);
+
+    // show swing buttons
+    advancedTexture.addControl(swingLeftButton);
+    advancedTexture.addControl(swingRightButton);
+
+    flyToBatter(camera, scene);
+  });
+};
+
 const BabylonCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -347,42 +385,11 @@ const BabylonCanvas: React.FC = () => {
         scene
       );
 
-      loadMeshes(assetsManager, camera, scene);
-
       // controls
-      const advancedTexture =
-        GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+      createControls(camera, scene);
 
-      const swingLeftButton = createSwingButton(
-        "swingLeft",
-        "images/cricketBatLeft.png"
-      );
-      swingLeftButton.top = "-50px";
-      swingLeftButton.left = "-100px";
-
-      const swingRightButton = createSwingButton(
-        "swingRight",
-        "images/cricketBatRight.png"
-      );
-      swingRightButton.top = "-50px";
-      swingRightButton.left = "100px";
-
-      const startButton = createStartButton();
-      advancedTexture.addControl(startButton);
-
-      startButton.onPointerUpObservable.add(() => {
-        // hide logo
-        gameMeshes.logo.setEnabled(false);
-
-        // hide start button
-        advancedTexture.removeControl(startButton);
-
-        // show swing buttons
-        advancedTexture.addControl(swingLeftButton);
-        advancedTexture.addControl(swingRightButton);
-
-        flyToBatter(camera, scene);
-      });
+      // meshes
+      loadMeshes(assetsManager, camera, scene);
 
       assetsManager.load();
 
