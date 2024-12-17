@@ -4,23 +4,16 @@ import * as GUI from "@babylonjs/gui";
 
 import * as BABYLON from "@babylonjs/core";
 
-const randomFielderPositions = (
-  numFielders: number,
-  minSpacing: number
-): BABYLON.Vector3[] => {
-  const fieldRadius = 50;
-  const minRadius = 20;
-
+const randomFielderPositions = (numFielders: number): BABYLON.Vector3[] => {
   const positions = [];
-  const minAngle = minSpacing / fieldRadius;
-
-  let angleStart = Math.random() * 2 * Math.PI;
+  const fieldRadius = 50;
+  const minRadius = 25;
+  const angleStep = (2 * Math.PI) / numFielders;
 
   for (let i = 0; i < numFielders; i++) {
     const distance = Math.random() * (fieldRadius - minRadius) + minRadius;
-    let angle = angleStart + i * minAngle + Math.random() * (minAngle / 2);
-    angle %= 2 * Math.PI;
-
+    const angleVariance = angleStep * Math.random() - 0.5;
+    const angle = i * angleStep + angleVariance;
     const x = distance * Math.cos(angle);
     const z = distance * Math.sin(angle);
 
@@ -330,11 +323,18 @@ const BabylonCanvas: React.FC = () => {
         "fielderIdle.glb"
       );
       fielderMeshTask.onSuccess = (task) => {
-        const fielder = task.loadedMeshes[0];
-        fielder.position = randomFielderPositions(9, 5)[0];
-        fielder.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+        const fielder = task.loadedMeshes[0] as BABYLON.Mesh;
         fielder.scaling = new BABYLON.Vector3(1, 1, 1);
-        fielder.lookAt(new BABYLON.Vector3(0, 1, 0));
+        const positions = randomFielderPositions(9);
+        for (let i = 0; i < 9; i++) {
+          const fielderInstance = fielder.clone(`fielder_${i}`);
+          fielderInstance.position = positions[i];
+          fielderInstance.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+          fielderInstance.lookAt(new BABYLON.Vector3(0, 1, 0));
+        }
+        task.loadedMeshes.forEach((value) => {
+          value.isVisible = false;
+        });
       };
 
       // controls
