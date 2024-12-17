@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
+
 import "@babylonjs/loaders";
 import "@babylonjs/inspector";
-
 import * as GUI from "@babylonjs/gui";
 import * as BABYLON from "@babylonjs/core";
 
@@ -303,6 +303,9 @@ const loadMeshes = (
     "fielderIdle.glb"
   );
   fielderMeshTask.onSuccess = (task) => {
+    // stop animations
+    task.loadedAnimationGroups.forEach((value) => value.stop());
+
     const fielder = task.loadedMeshes[0] as BABYLON.Mesh;
     fielder.scaling = new BABYLON.Vector3(1, 1, 1);
     const positions = randomFielderPositions(9);
@@ -369,8 +372,8 @@ const createScene = (engine: BABYLON.Engine): BABYLON.Scene => {
 
   // materials
   const { goldShiny, navyMatte } = createMaterials(scene);
-  pbrMaterials["goldShiny"] = goldShiny;
-  pbrMaterials["navyMatte"] = navyMatte;
+  pbrMaterials.goldShiny = goldShiny;
+  pbrMaterials.navyMatte = navyMatte;
 
   // HDRI map
   scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
@@ -410,9 +413,9 @@ const BabylonCanvas: React.FC = () => {
 
     window.addEventListener("resize", handleResize);
 
-    //**for development: make inspector visible/invisible
+    // debug console
     window.addEventListener("keydown", (ev) => {
-      //Shift+Ctrl+Alt+I
+      // shift+ctrl+alt+i
       if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.keyCode === 73) {
         if (scene.debugLayer.isVisible()) {
           scene.debugLayer.hide();
