@@ -171,7 +171,7 @@ const createCamera = (scene: BABYLON.Scene): BABYLON.ArcRotateCamera => {
 
 const createLighting = (scene: BABYLON.Scene) => {
   const sunlight = new BABYLON.DirectionalLight(
-    "skylight",
+    "sunlight",
     new BABYLON.Vector3(-1, -2, -1),
     scene
   );
@@ -185,6 +185,7 @@ const createLighting = (scene: BABYLON.Scene) => {
   //   scene
   // );
   // skylight.intensity = 0.3;
+
   return { sunlight };
 };
 
@@ -354,6 +355,39 @@ const createControls = (
   });
 };
 
+const createScene = (engine: BABYLON.Engine): BABYLON.Scene => {
+  const scene = new BABYLON.Scene(engine);
+  const assetsManager = new BABYLON.AssetsManager(scene);
+
+  // sky
+  scene.clearColor = new BABYLON.Color4(0.4, 0.7, 0.9, 1.0);
+
+  const camera = createCamera(scene);
+
+  const { sunlight } = createLighting(scene);
+
+  // materials
+  const { goldShiny, navyMatte } = createMaterials(scene);
+  pbrMaterials["goldShiny"] = goldShiny;
+  pbrMaterials["navyMatte"] = navyMatte;
+
+  // HDRI map
+  scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+    "https://assets.babylonjs.com/environments/environmentSpecular.env",
+    scene
+  );
+
+  // controls
+  createControls(camera, scene);
+
+  // meshes
+  loadMeshes(assetsManager, camera, scene);
+
+  assetsManager.load();
+
+  return scene;
+};
+
 const BabylonCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -363,40 +397,7 @@ const BabylonCanvas: React.FC = () => {
     const canvas = canvasRef.current;
     const engine = new BABYLON.Engine(canvas, true);
 
-    const createScene = (): BABYLON.Scene => {
-      const scene = new BABYLON.Scene(engine);
-      const assetsManager = new BABYLON.AssetsManager(scene);
-
-      // sky
-      scene.clearColor = new BABYLON.Color4(0.4, 0.7, 0.9, 1.0);
-
-      const camera = createCamera(scene);
-
-      const { sunlight } = createLighting(scene);
-
-      // materials
-      const { goldShiny, navyMatte } = createMaterials(scene);
-      pbrMaterials["goldShiny"] = goldShiny;
-      pbrMaterials["navyMatte"] = navyMatte;
-
-      // HDRI map
-      scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-        "https://assets.babylonjs.com/environments/environmentSpecular.env",
-        scene
-      );
-
-      // controls
-      createControls(camera, scene);
-
-      // meshes
-      loadMeshes(assetsManager, camera, scene);
-
-      assetsManager.load();
-
-      return scene;
-    };
-
-    const scene = createScene();
+    const scene = createScene(engine);
 
     engine.runRenderLoop(() => {
       scene.render();
