@@ -4,7 +4,7 @@ import * as GUI from "@babylonjs/gui";
 
 import * as BABYLON from "@babylonjs/core";
 
-const randomFielderPosition = (
+const randomFielderPositions = (
   numFielders: number,
   minSpacing: number
 ): BABYLON.Vector3[] => {
@@ -331,7 +331,7 @@ const BabylonCanvas: React.FC = () => {
       );
       fielderMeshTask.onSuccess = (task) => {
         const fielder = task.loadedMeshes[0];
-        fielder.position = randomFielderPosition(9, 5)[0];
+        fielder.position = randomFielderPositions(9, 5)[0];
         fielder.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
         fielder.scaling = new BABYLON.Vector3(1, 1, 1);
         fielder.lookAt(new BABYLON.Vector3(0, 1, 0));
