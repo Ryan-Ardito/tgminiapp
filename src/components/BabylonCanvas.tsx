@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import "@babylonjs/loaders";
-import * as GUI from "@babylonjs/gui";
 
+import * as GUI from "@babylonjs/gui";
 import * as BABYLON from "@babylonjs/core";
+
+const gameMeshes: { [key: string]: BABYLON.AbstractMesh } = {};
+const pbrMaterials: { [key: string]: BABYLON.PBRMaterial } = {};
 
 const randomFielderPositions = (numFielders: number): BABYLON.Vector3[] => {
   const positions = [];
@@ -229,6 +232,90 @@ const createMaterials = (scene: BABYLON.Scene) => {
   return { goldShiny, navyMatte };
 };
 
+const loadMeshes = (
+  assetsManager: BABYLON.AssetsManager,
+  camera: BABYLON.ArcRotateCamera,
+  scene: BABYLON.Scene
+) => {
+  const stadiumMeshTask = assetsManager.addMeshTask(
+    "stadiumMeshTask",
+    "",
+    "scenes/",
+    "cricket_stadium.glb"
+  );
+  stadiumMeshTask.onSuccess = (task) => {
+    task.loadedMeshes[14].position = new BABYLON.Vector3(0, 0, 0);
+  };
+
+  const logoMeshTask = assetsManager.addMeshTask(
+    "logoMeshTask",
+    "",
+    "scenes/",
+    "logo.glb"
+  );
+  logoMeshTask.onSuccess = (task) => {
+    const rootMesh = task.loadedMeshes[0];
+    gameMeshes.logo = rootMesh;
+    rootMesh.position = new BABYLON.Vector3(-18, 10, 60);
+    rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
+    rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
+    rootMesh.parent = camera;
+    task.loadedMeshes[2].material = pbrMaterials.goldShiny;
+    task.loadedMeshes[1].material = pbrMaterials.navyMatte;
+
+    logoRotationControl(rootMesh, scene);
+  };
+
+  // Load the batter model
+  const batterMeshTask = assetsManager.addMeshTask(
+    "batterMeshTask",
+    "",
+    "scenes/batter/",
+    "batterDragBat.glb"
+  );
+  batterMeshTask.onSuccess = (task) => {
+    const batter = task.loadedMeshes[0];
+    batter.position = new BABYLON.Vector3(-9, 0, 1);
+    batter.scaling = new BABYLON.Vector3(1, 1, 1);
+  };
+
+  // Load the bowler model
+  const bowlerMeshTask = assetsManager.addMeshTask(
+    "bowlerMeshTask",
+    "",
+    "scenes/bowler/",
+    "bowlerIdle.glb"
+  );
+  bowlerMeshTask.onSuccess = (task) => {
+    const bowler = task.loadedMeshes[0];
+    bowler.position = new BABYLON.Vector3(9, 0, 1);
+    bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+    bowler.scaling = new BABYLON.Vector3(1, 1, 1);
+  };
+
+  // Load the fielder model
+  const fielderMeshTask = assetsManager.addMeshTask(
+    "fielderMeshTask",
+    "",
+    "scenes/fielder/",
+    "fielderIdle.glb"
+  );
+  fielderMeshTask.onSuccess = (task) => {
+    const fielder = task.loadedMeshes[0] as BABYLON.Mesh;
+    fielder.scaling = new BABYLON.Vector3(1, 1, 1);
+    const positions = randomFielderPositions(9);
+    for (let i = 0; i < 9; i++) {
+      const fielderInstance = fielder.clone(`fielder_${i}`);
+      fielderInstance.position = positions[i];
+      fielderInstance.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+      fielderInstance.lookAt(new BABYLON.Vector3(0, 1, 0));
+    }
+    task.loadedMeshes.forEach((value) => {
+      value.isVisible = false;
+    });
+  };
+};
+
 const BabylonCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -251,6 +338,8 @@ const BabylonCanvas: React.FC = () => {
 
       // materials
       const { goldShiny, navyMatte } = createMaterials(scene);
+      pbrMaterials["goldShiny"] = goldShiny;
+      pbrMaterials["navyMatte"] = navyMatte;
 
       // HDRI map
       scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
@@ -258,84 +347,7 @@ const BabylonCanvas: React.FC = () => {
         scene
       );
 
-      const stadiumMeshTask = assetsManager.addMeshTask(
-        "stadiumMeshTask",
-        "",
-        "scenes/",
-        "cricket_stadium.glb"
-      );
-      stadiumMeshTask.onSuccess = (task) => {
-        task.loadedMeshes[14].position = new BABYLON.Vector3(0, 0, 0);
-      };
-
-      const logoMeshTask = assetsManager.addMeshTask(
-        "logoMeshTask",
-        "",
-        "scenes/",
-        "logo.glb"
-      );
-      let logoMeshes: BABYLON.AbstractMesh[];
-      logoMeshTask.onSuccess = (task) => {
-        logoMeshes = task.loadedMeshes;
-        const rootMesh = task.loadedMeshes[0];
-        rootMesh.position = new BABYLON.Vector3(-18, 10, 60);
-        rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
-        rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
-        rootMesh.parent = camera;
-        task.loadedMeshes[2].material = goldShiny;
-        task.loadedMeshes[1].material = navyMatte;
-
-        logoRotationControl(rootMesh, scene);
-      };
-
-      // Load the batter model
-      const batterMeshTask = assetsManager.addMeshTask(
-        "batterMeshTask",
-        "",
-        "scenes/batter/",
-        "batterDragBat.glb"
-      );
-      batterMeshTask.onSuccess = (task) => {
-        const batter = task.loadedMeshes[0];
-        batter.position = new BABYLON.Vector3(-9, 0, 1);
-        batter.scaling = new BABYLON.Vector3(1, 1, 1);
-      };
-
-      // Load the bowler model
-      const bowlerMeshTask = assetsManager.addMeshTask(
-        "bowlerMeshTask",
-        "",
-        "scenes/bowler/",
-        "bowlerIdle.glb"
-      );
-      bowlerMeshTask.onSuccess = (task) => {
-        const bowler = task.loadedMeshes[0];
-        bowler.position = new BABYLON.Vector3(9, 0, 1);
-        bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-        bowler.scaling = new BABYLON.Vector3(1, 1, 1);
-      };
-
-      // Load the fielder model
-      const fielderMeshTask = assetsManager.addMeshTask(
-        "fielderMeshTask",
-        "",
-        "scenes/fielder/",
-        "fielderIdle.glb"
-      );
-      fielderMeshTask.onSuccess = (task) => {
-        const fielder = task.loadedMeshes[0] as BABYLON.Mesh;
-        fielder.scaling = new BABYLON.Vector3(1, 1, 1);
-        const positions = randomFielderPositions(9);
-        for (let i = 0; i < 9; i++) {
-          const fielderInstance = fielder.clone(`fielder_${i}`);
-          fielderInstance.position = positions[i];
-          fielderInstance.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-          fielderInstance.lookAt(new BABYLON.Vector3(0, 1, 0));
-        }
-        task.loadedMeshes.forEach((value) => {
-          value.isVisible = false;
-        });
-      };
+      loadMeshes(assetsManager, camera, scene);
 
       // controls
       const advancedTexture =
@@ -360,9 +372,7 @@ const BabylonCanvas: React.FC = () => {
 
       startButton.onPointerUpObservable.add(() => {
         // hide logo
-        logoMeshes.forEach((mesh) => {
-          mesh.setEnabled(false);
-        });
+        gameMeshes.logo.setEnabled(false);
 
         // hide start button
         advancedTexture.removeControl(startButton);
