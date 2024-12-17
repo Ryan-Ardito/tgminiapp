@@ -199,15 +199,39 @@
   resolved "https://registry.npmjs.org/@babylonjs/core/-/core-7.39.1.tgz"
   integrity sha512-OM6LXZ2sl0et5adUOxCfJNgjKV6LmudMQZx0vr+eNpsuUlh9sf4u8/Apcf5D0piqT8z/57Id2XHT6nB/sOemYg==
 
-"@babylonjs/gui@^7.39.3":
+"@babylonjs/gui-editor@^7.0.0":
+  version "7.40.3"
+  resolved "https://registry.npmjs.org/@babylonjs/gui-editor/-/gui-editor-7.40.3.tgz"
+  integrity sha512-5P6Vko7f1QAcW8cd94vz7OAiUIX/KDhU613D83DUncgZzIhSwTlxqBU9o2gGMm+XG2fZev7XlA/Pl80X+GR+xA==
+
+"@babylonjs/gui@^7.0.0", "@babylonjs/gui@^7.39.3":
   version "7.39.3"
   resolved "https://registry.npmjs.org/@babylonjs/gui/-/gui-7.39.3.tgz"
   integrity sha512-J10IP06sFieYob1coNB2DqoNiXqdREVxTVosujMb6A6ZGgxrUh1n1ggf30UicJS2H0aoN07BojnciSJHN1fGFg==
 
-"@babylonjs/loaders@^7.39.1":
+"@babylonjs/inspector@^7.40.3":
+  version "7.40.3"
+  resolved "https://registry.npmjs.org/@babylonjs/inspector/-/inspector-7.40.3.tgz"
+  integrity sha512-j/3J5xwIBU4G910mPuP7eBscpTlpmCcux0IuixNP24wFEhZKqKxt1IpOCP2rXT0H2mM/Md6/L4mbC4kV/Y6GWQ==
+  dependencies:
+    "@fortawesome/fontawesome-svg-core" "^6.1.0"
+    "@fortawesome/free-regular-svg-icons" "^6.0.0"
+    "@fortawesome/free-solid-svg-icons" "^6.0.0"
+
+"@babylonjs/loaders@^7.0.0", "@babylonjs/loaders@^7.39.1":
   version "7.39.1"
   resolved "https://registry.npmjs.org/@babylonjs/loaders/-/loaders-7.39.1.tgz"
   integrity sha512-OPnqP99FI7OB60YcvBOoa3UgWKxXz2ZQD0s+KD/pG6xK4vYky90mkFMfmek1NQtOnpMGblNz2JroNZmvPI1rQQ==
+
+"@babylonjs/materials@^7.0.0":
+  version "7.40.3"
+  resolved "https://registry.npmjs.org/@babylonjs/materials/-/materials-7.40.3.tgz"
+  integrity sha512-0edfyvG0PkU714qnzovjjjbLwtWvogMOho1tRkN0FLZBIse/KpFK/ZXEFDW32udc/aaF2LrKd+pdn7RgOdrwCg==
+
+"@babylonjs/serializers@^7.0.0":
+  version "7.40.3"
+  resolved "https://registry.npmjs.org/@babylonjs/serializers/-/serializers-7.40.3.tgz"
+  integrity sha512-cToKYlOE7plZlKgNuSwS4VzTV3tonpoGyKqsYJadC2dpGrDtnZCmRdZ608R15Pp0eGXhq2s6MzOfhajIp3xyNw==
 
 "@emotion/is-prop-valid@^1.1.0":
   version "1.2.0"
@@ -235,6 +259,32 @@
   version "0.18.20"
   resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.18.20.tgz"
   integrity sha512-UYqiqemphJcNsFEskc73jQ7B9jgwjWrSayxawS6UVFZGWrAAtkzjxSqnoclCXxWtfwLdzU+vTpcNYhpn43uP1w==
+
+"@fortawesome/fontawesome-common-types@6.7.2":
+  version "6.7.2"
+  resolved "https://registry.npmjs.org/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.7.2.tgz"
+  integrity sha512-Zs+YeHUC5fkt7Mg1l6XTniei3k4bwG/yo3iFUtZWd/pMx9g3fdvkSK9E0FOC+++phXOka78uJcYb8JaFkW52Xg==
+
+"@fortawesome/fontawesome-svg-core@^6.1.0":
+  version "6.7.2"
+  resolved "https://registry.npmjs.org/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.7.2.tgz"
+  integrity sha512-yxtOBWDrdi5DD5o1pmVdq3WMCvnobT0LU6R8RyyVXPvFRd2o79/0NCuQoCjNTeZz9EzA9xS3JxNWfv54RIHFEA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.7.2"
+
+"@fortawesome/free-regular-svg-icons@^6.0.0":
+  version "6.7.2"
+  resolved "https://registry.npmjs.org/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.7.2.tgz"
+  integrity sha512-7Z/ur0gvCMW8G93dXIQOkQqHo2M5HLhYrRVC0//fakJXxcF1VmMPsxnG6Ee8qEylA8b8Q3peQXWMNZ62lYF28g==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.7.2"
+
+"@fortawesome/free-solid-svg-icons@^6.0.0":
+  version "6.7.2"
+  resolved "https://registry.npmjs.org/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.7.2.tgz"
+  integrity sha512-GsBrnOzU8uj0LECDfD5zomZJIjrPhIlWU82AHwa2s40FKH+kcxQaBvBo3Z4TxyZHIyX8XTDxsyA33/Vx9eFuQA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.7.2"
 
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
@@ -409,14 +459,14 @@
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.5.tgz"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
-"@types/react-dom@^18.0.10":
+"@types/react-dom@^18.0.10", "@types/react-dom@>=16.0.9":
   version "18.0.10"
   resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.0.10.tgz"
   integrity sha512-E42GW/JA4Qv15wQdqJq8DL4JhNpB3prJgjgapN3qJT9K2zO5IIAQh4VXvCEDupoqAwnz0cY4RlXeC/ajX5SFHg==
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.0.27":
+"@types/react@*", "@types/react@^18.0.27", "@types/react@>=16.7.3":
   version "18.0.27"
   resolved "https://registry.npmjs.org/@types/react/-/react-18.0.27.tgz"
   integrity sha512-3vtRKHgVxu3Jp9t718R9BuzoD4NcQ8YJ5XRzsSKxNDiDonD2MXIT1TmSkenxuCycZJoQT5d2vE8LwWJxBC1gmA==

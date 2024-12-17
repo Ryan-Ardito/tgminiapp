@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "@babylonjs/loaders";
+import "@babylonjs/inspector";
 
 import * as GUI from "@babylonjs/gui";
 import * as BABYLON from "@babylonjs/core";
@@ -408,6 +409,18 @@ const BabylonCanvas: React.FC = () => {
     };
 
     window.addEventListener("resize", handleResize);
+
+    //**for development: make inspector visible/invisible
+    window.addEventListener("keydown", (ev) => {
+      //Shift+Ctrl+Alt+I
+      if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.keyCode === 73) {
+        if (scene.debugLayer.isVisible()) {
+          scene.debugLayer.hide();
+        } else {
+          scene.debugLayer.show();
+        }
+      }
+    });
 
     // Cleanup
     return () => {
