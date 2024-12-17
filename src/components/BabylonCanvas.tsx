@@ -5,6 +5,13 @@ import "@babylonjs/inspector";
 import * as GUI from "@babylonjs/gui";
 import * as BABYLON from "@babylonjs/core";
 
+const POSITIONS = {
+  logo: new BABYLON.Vector3(-18, 10, 60),
+  bowler: new BABYLON.Vector3(9, 0, 1),
+  batter: new BABYLON.Vector3(-9, 0, 1),
+  batterCam: new BABYLON.Vector3(-15, 4, 0),
+};
+
 const gameMeshes: { [key: string]: BABYLON.AbstractMesh } = {};
 const pbrMaterials: { [key: string]: BABYLON.PBRMaterial } = {};
 
@@ -206,7 +213,7 @@ const flyToBatter = (camera: BABYLON.ArcRotateCamera, scene: BABYLON.Scene) => {
     },
     {
       frame: 30,
-      value: new BABYLON.Vector3(-15, 4, 0),
+      value: POSITIONS.batterCam,
     },
   ];
 
@@ -258,7 +265,7 @@ const loadMeshes = (
   logoMeshTask.onSuccess = (task) => {
     const rootMesh = task.loadedMeshes[0];
     gameMeshes.logo = rootMesh;
-    rootMesh.position = new BABYLON.Vector3(-18, 10, 60);
+    rootMesh.position = POSITIONS.logo;
     rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
     rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
     rootMesh.parent = camera;
@@ -277,7 +284,7 @@ const loadMeshes = (
   );
   batterMeshTask.onSuccess = (task) => {
     const batter = task.loadedMeshes[0];
-    batter.position = new BABYLON.Vector3(-9, 0, 1);
+    batter.position = POSITIONS.batter;
     batter.scaling = new BABYLON.Vector3(1, 1, 1);
   };
 
@@ -290,7 +297,7 @@ const loadMeshes = (
   );
   bowlerMeshTask.onSuccess = (task) => {
     const bowler = task.loadedMeshes[0];
-    bowler.position = new BABYLON.Vector3(9, 0, 1);
+    bowler.position = POSITIONS.bowler;
     bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
     bowler.scaling = new BABYLON.Vector3(1, 1, 1);
   };
