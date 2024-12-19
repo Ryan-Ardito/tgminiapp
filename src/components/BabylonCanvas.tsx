@@ -7,7 +7,7 @@ import * as BABYLON from "@babylonjs/core";
 
 const POSITIONS = {
   logo: new BABYLON.Vector3(-18, 10, 60),
-  bowler: new BABYLON.Vector3(9, 0, 1),
+  bowler: new BABYLON.Vector3(9, 0, -1),
   batter: new BABYLON.Vector3(-9, 0, 1),
   batterCam: new BABYLON.Vector3(-15, 4, 0),
 };
@@ -168,7 +168,7 @@ const createCamera = (scene: BABYLON.Scene): BABYLON.ArcRotateCamera => {
     scene
   );
 
-  camera.fov = 1.2;
+  camera.fov = 1.4;
   camera.alpha = Math.PI;
   // camera.attachControl(canvas, true);
   // camera.upperBetaLimit = Math.PI / 2 - 0.14;
