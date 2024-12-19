@@ -12,8 +12,15 @@ const POSITIONS = {
   batterCam: new BABYLON.Vector3(-15, 4, 0),
 };
 
-const gameMeshes: { [key: string]: BABYLON.AbstractMesh } = {};
-const pbrMaterials: { [key: string]: BABYLON.PBRMaterial } = {};
+type GameData = {
+  gameMeshes: { [key: string]: BABYLON.AbstractMesh };
+  pbrMaterials: { [key: string]: BABYLON.PBRMaterial };
+};
+
+const gameData: GameData = {
+  gameMeshes: {},
+  pbrMaterials: {},
+};
 
 const randomFielderPositions = (numFielders: number): BABYLON.Vector3[] => {
   const positions = [];
@@ -253,6 +260,7 @@ const loadMeshes = (
     "cricket_stadium.glb"
   );
   stadiumMeshTask.onSuccess = (task) => {
+    gameData.gameMeshes.stadium = task.loadedMeshes[0];
     task.loadedMeshes[14].position = new BABYLON.Vector3(0, 0, 0);
   };
 
@@ -264,13 +272,13 @@ const loadMeshes = (
   );
   logoMeshTask.onSuccess = (task) => {
     const rootMesh = task.loadedMeshes[0];
-    gameMeshes.logo = rootMesh;
+    gameData.gameMeshes.logo = rootMesh;
     rootMesh.position = POSITIONS.logo;
     rootMesh.rotation = new BABYLON.Vector3(-Math.PI / 2, 0, 0);
     rootMesh.setPivotPoint(new BABYLON.Vector3(18, 0, -10));
     rootMesh.parent = camera;
-    task.loadedMeshes[2].material = pbrMaterials.goldShiny;
-    task.loadedMeshes[1].material = pbrMaterials.navyMatte;
+    task.loadedMeshes[2].material = gameData.pbrMaterials.goldShiny;
+    task.loadedMeshes[1].material = gameData.pbrMaterials.navyMatte;
 
     logoRotationControl(rootMesh, scene);
   };
@@ -284,6 +292,7 @@ const loadMeshes = (
   );
   batterMeshTask.onSuccess = (task) => {
     const batter = task.loadedMeshes[0];
+    gameData.gameMeshes.batter = batter;
     batter.position = POSITIONS.batter;
     batter.scaling = new BABYLON.Vector3(1, 1, 1);
   };
@@ -297,6 +306,7 @@ const loadMeshes = (
   );
   bowlerMeshTask.onSuccess = (task) => {
     const bowler = task.loadedMeshes[0];
+    gameData.gameMeshes.bowler = bowler;
     bowler.position = POSITIONS.bowler;
     bowler.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
     bowler.scaling = new BABYLON.Vector3(1, 1, 1);
@@ -317,7 +327,9 @@ const loadMeshes = (
     fielder.scaling = new BABYLON.Vector3(1, 1, 1);
     const positions = randomFielderPositions(9);
     for (let i = 0; i < 9; i++) {
-      const fielderInstance = fielder.clone(`fielder_${i}`);
+      const fielderName = `fielder${i}`;
+      const fielderInstance = fielder.clone(fielderName);
+      gameData.gameMeshes[fielderName] = fielderInstance;
       fielderInstance.position = positions[i];
       fielderInstance.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
       fielderInstance.lookAt(new BABYLON.Vector3(0, 1, 0));
@@ -353,7 +365,7 @@ const createControls = (
 
   startButton.onPointerUpObservable.add(() => {
     // hide logo
-    gameMeshes.logo.setEnabled(false);
+    gameData.gameMeshes.logo.setEnabled(false);
 
     // hide start button
     advancedTexture.removeControl(startButton);
@@ -379,8 +391,8 @@ const createScene = (engine: BABYLON.Engine): BABYLON.Scene => {
 
   // materials
   const { goldShiny, navyMatte } = createMaterials(scene);
-  pbrMaterials.goldShiny = goldShiny;
-  pbrMaterials.navyMatte = navyMatte;
+  gameData.pbrMaterials.goldShiny = goldShiny;
+  gameData.pbrMaterials.navyMatte = navyMatte;
 
   // HDRI map
   scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
