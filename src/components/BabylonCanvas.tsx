@@ -22,16 +22,21 @@ const gameData: GameData = {
   pbrMaterials: {},
 };
 
-const randomFielderPositions = (numFielders: number): BABYLON.Vector3[] => {
+const randomFielderPositions = (
+  numFielders: number,
+  fielderSpread: number,
+  fieldersAngle: number
+): BABYLON.Vector3[] => {
   const positions = [];
   const fieldRadius = 50;
   const minRadius = 25;
-  const angleStep = (2 * Math.PI) / numFielders;
+  const angleStep = fielderSpread / numFielders;
 
   for (let i = 0; i < numFielders; i++) {
     const distance = Math.random() * (fieldRadius - minRadius) + minRadius;
     const angleVariance = angleStep * Math.random() - 0.5;
-    const angle = i * angleStep + angleVariance;
+    let angle = i * angleStep + angleVariance;
+    angle = angle - fieldersAngle; //
     const x = distance * Math.cos(angle);
     const z = distance * Math.sin(angle);
 
@@ -168,7 +173,7 @@ const createCamera = (scene: BABYLON.Scene): BABYLON.ArcRotateCamera => {
     scene
   );
 
-  camera.fov = 1.4;
+  camera.fov = 1.2;
   camera.alpha = Math.PI;
   // camera.attachControl(canvas, true);
   // camera.upperBetaLimit = Math.PI / 2 - 0.14;
@@ -324,9 +329,10 @@ const loadMeshes = (
     task.loadedAnimationGroups.forEach((value) => value.stop());
 
     const fielder = task.loadedMeshes[0] as BABYLON.Mesh;
+    const numFielders = 9;
     fielder.scaling = new BABYLON.Vector3(1, 1, 1);
-    const positions = randomFielderPositions(9);
-    for (let i = 0; i < 9; i++) {
+    const positions = randomFielderPositions(numFielders, Math.PI, Math.PI / 3);
+    for (let i = 0; i < numFielders; i++) {
       const fielderName = `fielder${i}`;
       const fielderInstance = fielder.clone(fielderName);
       gameData.gameMeshes[fielderName] = fielderInstance;
